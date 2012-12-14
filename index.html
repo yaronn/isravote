@@ -1,5 +1,4 @@
-
-<html>
+<html xmlns:fb="http://ogp.me/ns/fb#">
 
 <head>
 
@@ -9,7 +8,7 @@
 
 </head>
 
-<body>
+<body dir="rtl">
 
 <div id="fb-root"></div>
 
@@ -22,7 +21,7 @@
       channelUrl : '//localhost/channel.html', // Channel File for x-domain communication
       status     : true, // check the login status upon init?
       cookie     : false, // set sessions cookies to allow your server to access the session?
-      xfbml      : false  // parse XFBML tags on this page?
+      xfbml      : true  // parse XFBML tags on this page?
     });
 
 
@@ -57,7 +56,26 @@
 </script>
 
 
+
 <div id="visualization" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+
+
+
+<div style="width: 1000px; margin: auto">
+  <div style="float: left">   
+
+    <div id="left"></div>
+
+  </div>
+
+
+  <div style="float: right">
+
+    <div id="right"></div>
+
+  </div>
+</div>
+  
 
 </body>
 
