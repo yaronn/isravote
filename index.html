@@ -3,11 +3,28 @@
 <head>
 
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-  <script src="http://code.highcharts.com/highcharts.js"></script>
+  <script src="http://d3js.org/d3.v3.min.js"></script>
   <script src="votes.js"></script>
 
   <style>
-    #body {background-color: #111111; color: white;}    
+    #body {font: 11px sans-serif;} 
+     
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+
+    .bar {
+      fill: steelblue;
+    }
+
+    .x.axis path {
+      display: none;
+    }
+
+
   </style>
 
 </head>
@@ -60,23 +77,11 @@
 </script>
 
 
-<div id="visualization" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+<div id="visualization" style="margin-left: 300px" dir="ltr"></div>
 
 
+<div id="friends" style="margin-right: 430px"> 
 
-<div style="width: 1000px; margin: auto">
-  <div style="float: left">   
-
-    <div id="left"></div>
-
-  </div>
-
-
-  <div style="float: right">
-
-    <div id="right"></div>
-
-  </div>
 </div>
   
 
