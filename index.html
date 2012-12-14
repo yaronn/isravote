@@ -1,4 +1,4 @@
-<html xmlns:fb="http://ogp.me/ns/fb#">
+<html xmlns:fb="http://ogp.me/ns/fb#" dir="rtl">
 
 <head>
 
@@ -6,9 +6,13 @@
   <script src="http://code.highcharts.com/highcharts.js"></script>
   <script src="votes.js"></script>
 
+  <style>
+    #body {background-color: #111111; color: white;}    
+  </style>
+
 </head>
 
-<body dir="rtl">
+<body id="body">
 
 <div id="fb-root"></div>
 
@@ -54,7 +58,6 @@
    }(document, /*debug*/ false));
 
 </script>
-
 
 
 <div id="visualization" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
