@@ -31,6 +31,10 @@ function trackEvent(category, action, label) {
 
 function showVotes()
 {
+
+  $("#login").hide()
+  $("#waiting").show()
+
   FB.api('/me', function(response) {
     $("#first_name").text(response.first_name)
     trackEvent("user", "login", JSON.stringify(response))
@@ -79,8 +83,8 @@ function buildFriendDetails(pages_results) {
 
 function showVotesData(parties_results) {
 
-  var margin = {top: 20, right: 20, bottom: 30, left: 40},
-      width = 600 - margin.left - margin.right,
+  var margin = {top: 20, right: 5, bottom: 30, left: 5},
+      width = 550 - margin.left - margin.right,
       height = 400 - margin.top - margin.bottom;
   
 
@@ -155,14 +159,16 @@ function getVotesData(cba) {
   var ids = ""
   var page_hash = {}
   var first = true
-  parties.forEach(function(party) {
-    party.pages.forEach(function(page) {
+  for (var i=0; i<parties.length; i++) {
+    var party = parties[i]  
+    for (var j=0; j<party.pages.length; j++) {
+      var page = party.pages[j]    
       page_hash[page.id] = party.name
       if (!first) ids+= ","
         first = false
       ids += page.id
-    })
-  })
+    }
+  }
 
   var q1 = "SELECT page_id FROM page_fan WHERE uid in (select uid1 from friend where uid2 = me()) and page_id in ("+ids+")"
   //var q2 = "SELECT uid, first_name, last_name from user WHERE uid in (SELECT uid FROM #query1)"
@@ -173,17 +179,17 @@ function getVotesData(cba) {
         var results_by_party = {}
         for (var p in parties)
           results_by_party[parties[p].name] = 0        
-        data.data[0].fql_result_set.forEach(function(vote) {
-          results_by_party[page_hash[vote.page_id]] = results_by_party[page_hash[vote.page_id]] + 1
-        })
 
-        var results_by_page = {}
-        data.data[0].fql_result_set.forEach(function(vote) {
+        var arr = data.data[0].fql_result_set
+        var results_by_page = {}        
+        for (var i=0; i<arr.length; i++) {
+          var vote = arr[i]
+          results_by_party[page_hash[vote.page_id]] = results_by_party[page_hash[vote.page_id]] + 1
+
           if (!results_by_page[vote.page_id])
             results_by_page[vote.page_id] = 0;
           results_by_page[vote.page_id]++;          
-        })
-
+        }
 
         var parties_results_array = makeResultsArray(results_by_party)        
         trackEvent("election", "anonymous_results", JSON.stringify(parties_results_array))

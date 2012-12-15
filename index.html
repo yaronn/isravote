@@ -1,15 +1,19 @@
+<!DOCTYPE html>
 <html xmlns:fb="http://ogp.me/ns/fb#" dir="rtl">
 
 <head>
 
   <meta name="keywords" content="בחירות, בנימין נתניהו, ביבי, ציפי לבני, לבני, שלי יחימוביץ', יחימוביץ, יאיר לפיד, לפיד, נפתלי בנט, בנט, הבית היהודי, התנועה, העבודה, זהבה גלאון, מרץ, אביגדור ליברמן, דב חנין, עמיר פרץ"><meta name="description" content="למי יצביעו בבחירות החברים שלך בפייסבוק">
 
+ <meta name="viewport" content="width=device-width, initial-scale=0.75, maximum-scale=0.95">
+
+  <script src="json2.js"></script>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <script src="http://d3js.org/d3.v3.min.js"></script>  
   <script src="votes.js"></script>
 
   <style>
-    #body {margin-left: 0px; font-family: Arial,'Arial (Hebrew)','David (Hebrew)','Courier New (Hebrew)'} 
+    #body {font-family: Arial,'Arial (Hebrew)','David (Hebrew)','Courier New (Hebrew)'} 
     #visualization {font: 12px sans-serif;}
      
     .axis path,
@@ -40,38 +44,41 @@
 
 <body id="body">
 
+<div style="width: 1255px; margin: auto;">
+
 <div id="fb-root"></div>
 
-<script>
+<script>    
 
-  window.fbAsyncInit = function() {
+  window.fbAsyncInit = function() {    
     // init the FB JS SDK
     FB.init({
       appId      : '123092357853018', // App ID from the App Dashboard
-      channelUrl : '//localhost/channel.html', // Channel File for x-domain communication
+      channelUrl : '//http://dl-web.dropbox.com/spa/9tadytq9q44jshp/isravote/public/channel.html', // Channel File for x-domain communication
       status     : true, // check the login status upon init?
-      cookie     : false, // set sessions cookies to allow your server to access the session?
+      cookie     : true, // set sessions cookies to allow your server to access the session?
       xfbml      : true  // parse XFBML tags on this page?
-    });
-
-
-    FB.getLoginStatus(function(response) {
-      if (response.status!='connected') {
-        FB.login(function(response) { 
-          if (response.authResponse) {
+    });    
+    
+    FB.Event.subscribe('auth.login', function(response) {
+        if (response.authResponse) {            
             showVotes()
           }
-          else {
+          else {            
             alert("Cannot log in to facebook: " + JSON.stringify(response))
           }
+    });
 
-        }, {scope: 'friends_likes'});
-      }
-      else {
+    FB.getLoginStatus(function(response) {      
+      if (response.status=='connected') {
         showVotes()
       }
+      else {
+        $("#login").show()
+        $("#waiting").hide()
+      }
     });
-    
+
   };
 
 
@@ -87,36 +94,48 @@
 
 
 <div style="background-color: black; width: 100%; height: 50px; position: fixed; top: 0px; left: 0px; z-index: 9999">
-  <img src="isravote.png" style="width: 180px; float: right" />  
 
-  <div style="margin-top: 10px; margin-right: 40px; width: 350px; float: right">
-    <fb:like layout="button_count" send="false" width="300" show_faces="true" colorscheme="light"></fb:like>
-  </div>
 
-  <div style="float: left; margin-top: 15px;">
+  <div style="width: 1255px; margin: auto;">
 
-    <script type="text/javascript"><!--
-      google_ad_client = "ca-pub-9668105416922044";
-      /* isravote1 - top stripe */
-      google_ad_slot = "6618706074";
-      google_ad_width = 468;
-      google_ad_height = 15;
-      //-->
+
+    <img src="isravote.png" style="width: 180px; float: right" />  
+
+    <div style="margin-top: 10px; margin-right: 40px; width: 350px; float: right">
+      <fb:like layout="button_count" send="false" width="300" show_faces="true" colorscheme="light"></fb:like>
+    </div>
+
+    <div style="float: left; margin-top: 15px;">
+
+      <script type="text/javascript"><!--
+        google_ad_client = "ca-pub-9668105416922044";
+        /* isravote1 - top stripe */
+        google_ad_slot = "6618706074";
+        google_ad_width = 468;
+        google_ad_height = 15;
+        //-->
+        </script>
+        <script type="text/javascript"
+        src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
       </script>
-      <script type="text/javascript"
-      src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-    </script>
-  
+    
+    </div>
+
   </div>
 
 </div>
 
+
+<div id="login" style="margin-top: 150px; margin-right: 20px; display: none">    
+  <fb:login-button show-faces="true" width="200" max-rows="1" scope="friends_likes"></fb:login-button>
+</div>
 
 <div id="waiting" style="margin-top: 150px; margin-right: 20px;">
   <img src="wait.gif" /> הדף בטעינה...
 </div>
 
-<div id="main" style="margin-top: 50px; margin-right: 20px; margin-left: 0px; display: none">
+
+<div id="main" style="margin-top: 40px; margin-right: 55px; margin-left: 0px; display: none">
 
   <div style="float: right">
     <br />
@@ -152,25 +171,32 @@
   </div>
 
 
-  <div style="float: left; background-color: #F0F0F0;  margin-left: 0px; "> 
-    <div id="friends_top" style="margin-top: 10px; margin-left: 20px; margin-right: 20px;"></div>
+  <div style="float: left;  margin-left: 0px; "> 
+    
+    <div style="background-color: #F0F0F0;">
+      <div id="friends_top" style="margin-top: 10px; margin-left: 5px; margin-right: 5px;"></div>
 
-    <script type="text/javascript"><!--
-      google_ad_client = "ca-pub-9668105416922044";
-      /* isravote - left box */
-      google_ad_slot = "1630103273";
-      google_ad_width = 234;
-      google_ad_height = 60;
-      //-->
+      <script type="text/javascript"><!--
+        google_ad_client = "ca-pub-9668105416922044";
+        /* isravote - left box */
+        google_ad_slot = "1630103273";
+        google_ad_width = 234;
+        google_ad_height = 60;
+        //-->
+        </script>
+        <script type="text/javascript"
+        src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
       </script>
-      <script type="text/javascript"
-      src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-    </script>
 
-    <div id="friends_bottom" style="margin-top: 5px; margin-left: 20px; margin-right: 20px;"></div>
+      <div id="friends_bottom" style="margin-top: 5px; margin-left: 5px; margin-right: 5px;"></div>
+    </div>
+
+    <fb:like style="margin-right: 200px; margin-bottom: 20px;" layout="button_count" send="false" width="300" show_faces="true" colorscheme="light"></fb:like>
 
 
   </div>
+
+  
   
 </div>
 
@@ -188,6 +214,8 @@
   })();
 
 </script>
+
+</div>
 
 </body>
 
