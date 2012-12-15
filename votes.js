@@ -11,6 +11,8 @@ var parties = [
   {name: 'עוצמה לישראל', side: 'right', pages: [{name: 'אריה אלדד', id: 149782518386564}]}
 ]
 
+var page_names_by_id = buildPageNamesHash(parties)
+
 var comments = [
   "קצת מצחיק, לא?",
   "קצת עצוב, לא?",
@@ -28,31 +30,45 @@ function showVotes()
   $("#comment").text(comments[Math.floor(Math.random()*(comments.length-1))])
 
   //data = [{name: 'avoda', votes: 10}]
-  getVotesData(function(data) {    
-    showVotesData(data)
+  getVotesData(function(parties_results, pages_results) {    
+    showVotesData(parties_results)
+    buildFriendDetails(pages_results)
+    $("#waiting").hide()
+    $("#main").show()
   })
-
-  buildFriendDetails()
+  
 }
 
-function buildFriendDetails() {
-  for (var p in parties) {    
+function buildPageNamesHash(parties) {
+  var res = {}
+  for (var p in parties) {
     var party = parties[p]
-    var div = $("#friends")    
+    for (var pg in party.pages) {
+      var page = party.pages[pg]
+      res[page.id] = page.name
+    }
+  }
+  return res
+}
 
-    for (var s in party.pages) {
-      var person = party.pages[s]
-      div.append("<h5 style='margin-top: 0px; margin-bottom: 5px'>חברים שאוהבים את "+person.name+"</h5>")      
-      div.append('<fb:facepile href="http://www.facebook.com/'+person.id+'" size="large" max_rows="12" width="400" colorscheme="light" s></fb:facepile>')      
-      if (p<parties.length-1 || s<party.pages.length-1) 
-        div.append('<hr />')
-    } 
-  }  
+function buildFriendDetails(pages_results) {
+  
+  var div = $("#friends_top")      
+
+  for (var p in pages_results) {    
+    if (p==2 || p==pages_results.length-1)
+      var div = $("#friends_bottom")
+
+    var page = pages_results[p] 
+    div.append("<h5 style='margin-top: 0px; margin-bottom: 5px'>חברים שאוהבים את " + page_names_by_id[page.name] + "</h5>")      
+    div.append('<fb:facepile href="http://www.facebook.com/'+page.name+'" size="large" max_rows="12" width="400" colorscheme="light" s></fb:facepile>')      
+    div.append('<hr />')
+    }
 
   FB.XFBML.parse();   
 }
 
-function showVotesData(data) {
+function showVotesData(parties_results) {
 
   var margin = {top: 20, right: 20, bottom: 30, left: 40},
       width = 600 - margin.left - margin.right,
@@ -80,8 +96,8 @@ function showVotesData(data) {
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
-  x.domain(data.map(function(d) { return d.name; }));
-  y.domain([0, d3.max(data, function(d) { return d.votes; })+5]);
+  x.domain(parties_results.map(function(d) { return d.name; }));
+  y.domain([0, d3.max(parties_results, function(d) { return d.votes; })+5]);
 
   svg.append("g")
       .attr("class", "x axis")
@@ -93,7 +109,7 @@ function showVotesData(data) {
       .call(yAxis)
    
   svg.selectAll(".bar")
-      .data(data)
+      .data(parties_results)
     .enter().append("rect")
       .attr("class", "bar")
       .attr("x", function(d) { return x(d.name); })
@@ -102,7 +118,7 @@ function showVotesData(data) {
       .attr("height", function(d) { return height - y(d.votes); })
     
   svg.selectAll("span")
-    .data(data)
+    .data(parties_results)
     .enter().append("text")      
       .text(function(d) { return d.votes })      
       .attr("x", function(d) { return x(d.name) + x.rangeBand()/2 - 5  })  
@@ -145,15 +161,25 @@ function getVotesData(cba) {
   FB.api('/fql', {q:{"query1": q1/*,"query2":q2*/}}, 
     function(data) {
                     
-        var results = {}
+        var results_by_party = {}
         for (var p in parties)
-          results[parties[p].name] = 0        
+          results_by_party[parties[p].name] = 0        
         data.data[0].fql_result_set.forEach(function(vote) {
-          results[page_hash[vote.page_id]] = results[page_hash[vote.page_id]] + 1
+          results_by_party[page_hash[vote.page_id]] = results_by_party[page_hash[vote.page_id]] + 1
         })
 
-        var result_array = makeResultsArray(results)
-        cba(result_array)
+        var results_by_page = {}
+        data.data[0].fql_result_set.forEach(function(vote) {
+          if (!results_by_page[vote.page_id])
+            results_by_page[vote.page_id] = 0;
+          results_by_page[vote.page_id]++;          
+        })
+
+
+        var parties_results_array = makeResultsArray(results_by_party)        
+        var pages_results_array = makeResultsArray(results_by_page)
+        pages_results_array.reverse()        
+        cba(parties_results_array, pages_results_array)
       })
 
 }
