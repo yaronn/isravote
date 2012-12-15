@@ -7,7 +7,8 @@
   <script src="votes.js"></script>
 
   <style>
-    #body {font: 11px sans-serif;} 
+    #body {margin-left: 0px;} 
+    #visualization {font: 12px sans-serif;}
      
     .axis path,
     .axis line {
@@ -24,6 +25,12 @@
       display: none;
     }
 
+    hr {
+      margin: 18px 0;
+      border: 0;
+      border-top: 1px solid #EEE;
+      border-bottom: 1px solid white;
+    }
 
   </style>
 
@@ -77,13 +84,40 @@
 </script>
 
 
-<div id="visualization" style="margin-left: 300px" dir="ltr"></div>
+<div style="background-color: black; width: 100%; height: 50px; position: fixed; top: 0px; left: 0px; z-index: 9999">
+  <img src="isravote.png" style="width: 180px; float: right" />  
 
-
-<div id="friends" style="margin-right: 430px"> 
+  <div style="margin-top: 10px; margin-right: 250px;">
+    <fb:like layout="button_count" send="false" width="300" show_faces="true" colorscheme="light"></fb:like>
+  </div>
 
 </div>
+
+<div style="margin-top: 50px; margin-right: 20px; margin-left: 0px;">
+
+  <div style="float: right">
+    
+    
+    <h2>שלום <span id="first_name"></span>. <br />
+      אם הבחירות היו מתקיימות בין החברים שלך אלו היו התוצאות:<br />      
+    </h2>
+    
+    <div id="visualization" dir="ltr" style="margin-top: 10px;">
+    </div>
+
+    <h2 id="comment"></h2>
+
+    <br />
+    לתגובות והצעות פנו אלי (<a href="http://www.facebook.com/yaron.naveh">פייסבוק</a> / <a href="mailto:yaronn01@gmail.com">מייל</a>)
+
+  </div>
+
+
+  <div style="float: left; background-color: #F0F0F0;  margin-left: 0px; "> 
+    <div id="friends" style="margin-top: 10px; margin-left: 20px; margin-right: 20px; margin-bottom: 20px;"></div>    
+  </div>
   
+</div>
 
 </body>
 

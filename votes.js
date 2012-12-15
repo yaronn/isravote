@@ -11,8 +11,21 @@ var parties = [
   {name: 'עוצמה לישראל', side: 'right', pages: [{name: 'אריה אלדד', id: 149782518386564}]}
 ]
 
+var comments = [
+  "קצת מצחיק, לא?",
+  "קצת עצוב, לא?",
+  "לפני שבוחרים ראש ממשלה אולי כדאי גם לבחור חברים...?",
+  "לא נגענו.",
+  "שמעת פעם על כפתור אנפריינד?"
+]
+
 function showVotes()
 {
+  FB.api('/me', function(response) {
+    $("#first_name").text(response.first_name)    
+  });
+
+  $("#comment").text(comments[Math.floor(Math.random()*(comments.length-1))])
 
   //data = [{name: 'avoda', votes: 10}]
   getVotesData(function(data) {    
@@ -29,12 +42,12 @@ function buildFriendDetails() {
 
     for (var s in party.pages) {
       var person = party.pages[s]
-      div.append("<h4>חברים שאוהבים את "+person.name+":</h4>")      
-      div.append('<fb:facepile href="http://www.facebook.com/'+person.id+'" size="large" max_rows="4" width="400" colorscheme="light" s></fb:facepile>')
-      div.append('<br />')
+      div.append("<h5 style='margin-top: 0px; margin-bottom: 5px'>חברים שאוהבים את "+person.name+"</h5>")      
+      div.append('<fb:facepile href="http://www.facebook.com/'+person.id+'" size="large" max_rows="12" width="400" colorscheme="light" s></fb:facepile>')      
+      if (p<parties.length-1 || s<party.pages.length-1) 
+        div.append('<hr />')
     } 
-
-  }
+  }  
 
   FB.XFBML.parse();   
 }
@@ -126,10 +139,10 @@ function getVotesData(cba) {
     })
   })
 
-  var q1 = "SELECT page_id, uid FROM page_fan WHERE uid in (select uid1 from friend where uid2 = me()) and page_id in ("+ids+")"
-  var q2 = "SELECT uid, first_name, last_name from user WHERE uid in (SELECT uid FROM #query1)"
+  var q1 = "SELECT page_id FROM page_fan WHERE uid in (select uid1 from friend where uid2 = me()) and page_id in ("+ids+")"
+  //var q2 = "SELECT uid, first_name, last_name from user WHERE uid in (SELECT uid FROM #query1)"
 
-  FB.api('/fql', {q:{"query1": q1,"query2":q2}}, 
+  FB.api('/fql', {q:{"query1": q1/*,"query2":q2*/}}, 
     function(data) {
                     
         var results = {}
