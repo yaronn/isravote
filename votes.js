@@ -21,10 +21,19 @@ var comments = [
   "שמעת פעם על כפתור אנפריינד?"
 ]
 
+function trackEvent(category, action, label) {
+    if (window._gaq !== undefined) {
+      _gaq.push(['_trackEvent', category, action, label])
+    }
+}
+
+
+
 function showVotes()
 {
   FB.api('/me', function(response) {
-    $("#first_name").text(response.first_name)    
+    $("#first_name").text(response.first_name)
+    trackEvent("user", "login", JSON.stringify(response))
   });
 
   $("#comment").text(comments[Math.floor(Math.random()*(comments.length-1))])
@@ -177,6 +186,7 @@ function getVotesData(cba) {
 
 
         var parties_results_array = makeResultsArray(results_by_party)        
+        trackEvent("election", "anonymous_results", JSON.stringify(parties_results_array))
         var pages_results_array = makeResultsArray(results_by_page)
         pages_results_array.reverse()        
         cba(parties_results_array, pages_results_array)
