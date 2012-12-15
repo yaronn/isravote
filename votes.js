@@ -1,8 +1,9 @@
+var x;
 
 var parties = [
   {name: 'העבודה', side: 'left', pages: [{name: "שלי יחימוביץ'", id: 162319074217}]},
   {name: 'יש עתיד', side: 'left', pages: [{name: 'יאיר לפיד', id: 107836625941364}]},
-  {name: 'מרצ', side: 'left', pages: [{name: 'זהבה גלאון', id: 115028251920872}]},
+  {name: 'מרצ', side: 'left', pages: [{name: 'זהבה גלאון', id: 115028251920872}, {name: 'ניצן הורוביץ', id: 66398526339}]},
   {name: 'התנועה', side: 'left', pages: [{name: 'ציפי לבני', id: 37665519437}, {name: 'עמיר פרץ', id: 154570404606299}]},
   {name: 'הליכוד ביתנו', side: 'right', pages: [{name: 'בנימין נתניהו', id: 268108602075}, {name: 'אביגדור ליברמן', id: 178433145502975}]},
   {name: 'הבית היהודי', side: 'right',pages: [{name: 'נפתלי בנט', id: 396697410351933}]},
@@ -66,12 +67,9 @@ function buildPageNamesHash(parties) {
 
 function buildFriendDetails(pages_results) {
   
-  var div = $("#friends_top")      
+  var div = $("#friends")      
 
   for (var p in pages_results) {    
-    if (p==2 || p==pages_results.length-1)
-      var div = $("#friends_bottom")
-
     var page = pages_results[p] 
     div.append("<h5 style='margin-top: 0px; margin-bottom: 5px'>חברים שאוהבים את " + page_names_by_id[page.name] + "</h5>")      
     div.append('<fb:facepile href="http://www.facebook.com/'+page.name+'" size="large" max_rows="12" width="400" colorscheme="light" s></fb:facepile>')      
@@ -170,7 +168,7 @@ function getVotesData(cba) {
     }
   }
 
-  var q1 = "SELECT page_id FROM page_fan WHERE uid in (select uid1 from friend where uid2 = me()) and page_id in ("+ids+")"
+  var q1 = "SELECT page_id, uid FROM page_fan WHERE uid in (select uid1 from friend where uid2 = me()) and page_id in ("+ids+")"
   //var q2 = "SELECT uid, first_name, last_name from user WHERE uid in (SELECT uid FROM #query1)"
 
   FB.api('/fql', {q:{"query1": q1/*,"query2":q2*/}}, 
@@ -181,6 +179,7 @@ function getVotesData(cba) {
           results_by_party[parties[p].name] = 0        
 
         var arr = data.data[0].fql_result_set
+        x = arr
         var results_by_page = {}        
         for (var i=0; i<arr.length; i++) {
           var vote = arr[i]
